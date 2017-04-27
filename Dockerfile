@@ -7,3 +7,5 @@ RUN yum -y install epel-release && \
     yum -y install ansible
 
 COPY ansible-pull /var/lib/ansible/pull
+
+CMD cd /var/lib/ansible/pull && ansible-playbook playbook.yml ; /bin/bash

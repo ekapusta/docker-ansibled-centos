@@ -7,9 +7,11 @@
     schedule: '*/15 * * * *'
     cron_user: root
     logfile: /var/log/ansible-pull.log
+    galaxy_logfile: /var/log/ansible-galaxy.log
     workdir: /var/lib/ansible/local
-    repo_url: lookup('env','ANSIBLE_PLAYBOOK_REPO')
-
+    repo_url: "{{ lookup('env','ANSIBLE_PLAYBOOK_REPO') }}"
+    ansible_pull_cmd: "ansible-pull --accept-host-key --vault-password-file=/var/lib/ansible/local/.vault_pass.txt -d {{ workdir }} -U {{ repo_url }}"
+    galaxy_install_cmd: "ansible-galaxy install -r {{ workdir }}/requirements.yml"
   tasks:
 
     - name: Install ansible and crontab
@@ -17,6 +19,10 @@
       with_items:
         - git
         - crontabs
+
+    - name: start crond on boot
+      service: name=crond state=started enabled=yes
+      tags: crontab
 
     - name: Create local directory to work from
       file: path={{workdir}} state=directory owner=root group=root mode=0751
@@ -26,3 +32,14 @@
 
     - name: Create logrotate entry for ansible-pull.log
       template: src=templates/etc_logrotate.d_ansible-pull.j2 dest=/etc/logrotate.d/ansible-pull owner=root group=root mode=0644
+
+    - block:
+        - name: Run galaxy
+          shell: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }}"
+        - name: Run ansible
+          shell: "{{ ansible_pull_cmd }} >> {{ logfile }}"
+      rescue:
+        - name: Run galaxy
+          shell: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }}"
+        - name: Run ansible
+          shell: "{{ ansible_pull_cmd }} >> {{ logfile }}"
