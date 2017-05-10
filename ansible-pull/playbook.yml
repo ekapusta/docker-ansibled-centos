@@ -29,17 +29,25 @@
 
     - name: Create crontab entry to clone/pull git repository
       template: src=templates/etc_cron.d_ansible-pull.j2 dest=/etc/cron.d/ansible-pull owner=root group=root mode=0644
+      when: (repo_url | trim != '')
 
     - name: Create logrotate entry for ansible-pull.log
       template: src=templates/etc_logrotate.d_ansible-pull.j2 dest=/etc/logrotate.d/ansible-pull owner=root group=root mode=0644
+      when: (repo_url | trim != '')
 
     - block:
         - name: Run galaxy
           shell: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }}"
+          when: (repo_url | trim != '')
+
         - name: Run ansible
           shell: "{{ ansible_pull_cmd }} >> {{ logfile }}"
+          when: (repo_url | trim != '')
       rescue:
         - name: Run galaxy
           shell: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }}"
+          when: (repo_url | trim != '')
+
         - name: Run ansible
           shell: "{{ ansible_pull_cmd }} >> {{ logfile }}"
+          when: (repo_url | trim != '')
