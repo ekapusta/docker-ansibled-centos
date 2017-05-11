@@ -38,14 +38,11 @@
     - block:
         - name: Run galaxy
           shell: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }}"
-          when: (repo_url | trim != '')
         - name: Run ansible
           shell: "{{ ansible_pull_cmd }} >> {{ logfile }}"
-          when: (repo_url | trim != '')
       rescue:
         - name: Run galaxy
           shell: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }}"
-          when: (repo_url | trim != '')
         - name: Run ansible
           shell: "{{ ansible_pull_cmd }} >> {{ logfile }}"
-          when: (repo_url | trim != '')
+      when: (repo_url | trim != '')
