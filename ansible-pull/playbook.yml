@@ -11,7 +11,7 @@
     workdir: /var/lib/ansible/local
     repo_url: "{{ lookup('env','ANSIBLE_PLAYBOOK_REPO') }}"
     filename: "{{ lookup('env','ANSIBLE_PLAYBOOK') }}"
-    ansible_pull_cmd: "ansible-pull --accept-host-key --vault-password-file=/var/lib/ansible/local/.vault_pass.txt --connection=local -d {{ workdir }} -U {{ repo_url }} {{ filename }}"
+    ansible_pull_cmd: "ansible-pull --accept-host-key --vault-password-file=/var/lib/ansible/local/.vault_pass.txt --connection=local -d {{ workdir }} -U {{ repo_url }} {{ filename }} -i localhost"
     galaxy_install_cmd: "ansible-galaxy install -r {{ workdir }}/requirements.yml"
   tasks:
 
