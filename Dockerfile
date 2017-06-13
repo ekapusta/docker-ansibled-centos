@@ -9,4 +9,4 @@ RUN yum -y install epel-release && \
 
 COPY ansible-pull /var/lib/ansible/pull
 
-CMD cd /var/lib/ansible/pull && ansible-playbook playbook.yml ; /usr/bin/zsh
+CMD cd /var/lib/ansible/pull && ansible-playbook playbook.yml ; /bin/zsh
