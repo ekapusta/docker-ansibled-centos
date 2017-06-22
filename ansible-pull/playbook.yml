@@ -31,7 +31,7 @@
       cron:
         name: "ansible-pull"
         state: present
-        disabled: "{{ repo_url | trim != '' | ternary('no', 'yes') }}"
+        disabled: "{{ repo_url | ternary('no', 'yes') }}"
         minute: "*/15"
         job: "{{ ansible_pull_cmd }} >> {{ logfile }} 2>&1"
 
@@ -39,7 +39,7 @@
       cron:
         name: "ansible-galaxy"
         state: present
-        disabled: "{{ repo_url | trim != '' | ternary('no', 'yes') }}"
+        disabled: "{{ repo_url | ternary('no', 'yes') }}"
         minute: "0"
         hour: "*/6"
         job: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }} 2>&1"
