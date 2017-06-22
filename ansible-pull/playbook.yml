@@ -4,8 +4,6 @@
   connection: local
 
   vars:
-    schedule: '*/15 * * * *'
-    cron_user: root
     logfile: /var/log/ansible-pull.log
     galaxy_logfile: /var/log/ansible-galaxy.log
     workdir: /var/lib/ansible/local
@@ -29,13 +27,22 @@
     - name: Create local directory to work from
       file: path={{workdir}} state=directory owner=root group=root mode=0751
 
-    - name: Create crontab entry to clone/pull git repository
-      template: src=templates/etc_cron.d_ansible-pull.j2 dest=/etc/cron.d/ansible-pull owner=root group=root mode=0644
-      when: (repo_url | trim != '')
+    - name: Crontab entry to clone/pull ansible git repository
+      cron:
+        name: "ansible-pull"
+        state: present
+        disabled: "{{ repo_url | trim != '' | ternary('no', 'yes') }}"
+        minute: "*/15"
+        job: "{{ ansible_pull_cmd }} >> {{ logfile }} 2>&1"
 
-    - name: Create logrotate entry for ansible-pull.log
-      template: src=templates/etc_logrotate.d_ansible-pull.j2 dest=/etc/logrotate.d/ansible-pull owner=root group=root mode=0644
-      when: (repo_url | trim != '')
+    - name: Crontab entry to update packages from ansible-galaxy
+      cron:
+        name: "ansible-galaxy"
+        state: present
+        disabled: "{{ repo_url | trim != '' | ternary('no', 'yes') }}"
+        minute: "0"
+        hour: "*/6"
+        job: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }} 2>&1"
 
     - block:
         - name: Run galaxy
