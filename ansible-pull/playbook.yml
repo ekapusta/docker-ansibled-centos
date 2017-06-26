@@ -45,9 +45,6 @@
         job: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }} 2>&1"
 
     - block:
-        - name: Run galaxy
-          shell: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }}"
-          ignore_errors: yes
         - name: Run ansible
           shell: "{{ ansible_pull_cmd }} >> {{ logfile }}"
       rescue:
