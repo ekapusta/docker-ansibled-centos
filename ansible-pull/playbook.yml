@@ -33,7 +33,7 @@
         state: present
         disabled: "{{ repo_url | ternary('no', 'yes') }}"
         minute: "*/15"
-        job: "{{ ansible_pull_cmd }} >> {{ logfile }} 2>&1"
+        job: "sleep $(( 1$(date +%N) % 200 )) && {{ ansible_pull_cmd }} >> {{ logfile }} 2>&1"
 
     - name: Crontab entry to update packages from ansible-galaxy
       cron:
