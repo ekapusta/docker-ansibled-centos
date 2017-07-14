@@ -1,4 +1,4 @@
-FROM centos:6
+FROM centos:7
 MAINTAINER Dmitry Romanov "dmitry.romanov85@gmail.com"
 
 RUN yum -y install epel-release && \
