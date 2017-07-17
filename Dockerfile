@@ -25,6 +25,9 @@ COPY useradd /etc/default/useradd
 
 RUN chsh -s /bin/zsh
 
+COPY ansible-environment.service /etc/systemd/system/ansible-environment.service
+RUN systemctl enable ansible-environment.service
+
 COPY ansible-pull.service /etc/systemd/system/ansible-pull.service
 RUN systemctl enable ansible-pull.service
 

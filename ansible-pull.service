@@ -1,8 +1,11 @@
 [Unit]
 Description=Ansible pull
+Wants=ansible-environment.service
 
 [Service]
+EnvironmentFile=-/var/lib/ansible/pull/.env
 WorkingDirectory=/var/lib/ansible/pull
+ExecStartPre=/usr/bin/sleep 5
 ExecStart=/usr/bin/ansible-playbook playbook.yml
 StandardOutput=syslog
 StandardError=syslog

@@ -1,0 +1,11 @@
+[Unit]
+Description=Ansible environment
+
+[Service]
+WorkingDirectory=/var/lib/ansible/pull
+ExecStart=/usr/bin/bash -c '/usr/bin/cat /proc/1/environ | /usr/bin/xargs --null --max-args=1 /usr/bin/echo > /var/lib/ansible/pull/.env'
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
