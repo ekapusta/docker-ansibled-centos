@@ -20,6 +20,11 @@
         - git
         - crontabs
 
+    - cronvar:
+       name: SHELL
+       value: /bin/bash
+       user: root
+
     - name: start crond on boot
       service: name=crond state=started enabled=yes
       tags: crontab
@@ -33,7 +38,7 @@
         state: present
         disabled: "{{ repo_url | ternary('no', 'yes') }}"
         minute: "*/15"
-        job: "sleep $(( 1$(date +%N) % 200 )) && {{ ansible_pull_cmd }} >> {{ logfile }} 2>&1"
+        job: 'sleep $(($RANDOM \% 300))s && {{ ansible_pull_cmd }} >> {{ logfile }} 2>&1'
 
     - name: Crontab entry to update packages from ansible-galaxy
       cron:
@@ -42,7 +47,7 @@
         disabled: "{{ repo_url | ternary('no', 'yes') }}"
         minute: "0"
         hour: "*/6"
-        job: "{{ galaxy_install_cmd }} >> {{ galaxy_logfile }} 2>&1"
+        job: 'sleep $(($RANDOM \% 600))s && {{ galaxy_install_cmd }} >> {{ galaxy_logfile }} 2>&1'
 
     - block:
         - name: Run ansible
